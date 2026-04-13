@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>群声镜 MindMirror</title>
+  <link rel="stylesheet" href="styles/global.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    /* ============================================
+       SVG Icon base styles
+       ============================================ */
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ============================================
+       Page Structure
+       ============================================ */
+
+    .page-view {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 100%;
+    }
+
+    .page-view.active {
+      display: flex;
+    }
+
+    /* ============================================
+       Splash Screen
+       ============================================ */
+
+    .splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      background: var(--color-bg);
+    }
+
+    .splash-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 20px rgba(0, 113, 227, 0.2));
+    }
+
+    .splash-title {
+      font-size: 36px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .splash-subtitle {
+      font-size: 15px;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+
+    .splash-slogan {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.12px;
+    }
+
+    /* ============================================
+       Record Entry Page
+       ============================================ */
+
+    .entry-header {
+      padding: var(--space-3xl) var(--space-xl) var(--space-lg);
+    }
+
+    .entry-greeting {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.14;
+      letter-spacing: 0.196px;
+      margin-bottom: 8px;
+    }
+
+    .entry-subtitle {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.374px;
+    }
+
+    .entry-cards {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      padding: 0 var(--space-xl);
+      margin-bottom: var(--space-xl);
+    }
+
+    .entry-card {
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      padding: var(--space-3xl) var(--space-lg);
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .entry-card:hover {
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .entry-card:active {
+      transform: scale(0.98);
+      background-color: var(--color-btn-hover);
+    }
+
+    .entry-card-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: var(--space-md);
+      color: var(--color-brand);
+    }
+
+    .entry-card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+      margin-bottom: 4px;
+    }
+
+    .entry-card-desc {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.12px;
+    }
+
+    .history-section {
+      padding: 0 var(--space-xl);
+    }
+
+    .history-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .history-title::before,
+    .history-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border-strong);
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .history-time {
+      color: var(--color-text-tertiary);
+      font-size: 13px;
+      min-width: 56px;
+      letter-spacing: -0.12px;
+    }
+
+    .history-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--color-brand);
+    }
+
+    .history-text {
+      color: var(--color-text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.224px;
+    }
+
+    .history-factor {
+      color: var(--color-text-tertiary);
+      font-size: 13px;
+    }
+
+    /* ============================================
+       Check-in Flow
+       ============================================ */
+
+    .checkin-page {
+      height: 100%;
+    }
+
+    .checkin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-md);
+      height: var(--safe-area-top);
+      flex-shrink: 0;
+    }
+
+    .checkin-back {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-brand);
+      cursor: pointer;
+    }
+
+    .checkin-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .checkin-content {
+      padding: var(--space-3xl) var(--space-xl);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checkin-step {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .checkin-step.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .checkin-question {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.14;
+      letter-spacing: 0.196px;
+      margin-bottom: var(--space-3xl);
+    }
+
+    /* Time dimension cards */
+    .time-option {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      flex: 1;
+    }
+
+    .time-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      padding: var(--space-xl);
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      border: 2px solid transparent;
+    }
+
+    .time-card:hover {
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .time-card:active {
+      transform: scale(0.985);
+    }
+
+    .time-card.selected {
+      border-color: var(--color-brand);
+      background-color: rgba(0, 113, 227, 0.04);
+    }
+
+    .time-card-icon {
+      width: 40px;
+      height: 40px;
+      color: var(--color-brand);
+    }
+
+    .time-card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+      margin-bottom: 4px;
+    }
+
+    .time-card-desc {
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.224px;
+    }
+
+    /* Emotion level cards */
+    #emotion-level-cards {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      flex: 1;
+    }
+
+    .emotion-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      height: 60px;
+      padding: 0 var(--space-lg);
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      border-left: 4px solid;
+    }
+
+    .emotion-card:hover {
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .emotion-card:active {
+      transform: scale(0.985);
+    }
+
+    .emotion-card.selected {
+      border-color: var(--color-brand);
+      background-color: rgba(0, 113, 227, 0.04);
+    }
+
+    .emotion-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .emotion-text {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+    }
+
+    /* Emotion tags */
+    #emotion-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+
+    #selected-count {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-xl);
+      letter-spacing: -0.12px;
+    }
+
+    .custom-tag-input {
+      height: 36px;
+      padding: 0 var(--space-md);
+      background: var(--color-card);
+      border: 1px solid var(--color-brand);
+      border-radius: var(--radius-micro);
+      font-size: 14px;
+      width: 130px;
+    }
+
+    /* Factor cards */
+    #factor-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+
+    .factor-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 80px;
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      border: 2px solid transparent;
+    }
+
+    .factor-card:hover {
+      box-shadow: var(--shadow-elevated);
+    }
+
+    .factor-card:active {
+      transform: scale(0.97);
+    }
+
+    .factor-card.selected {
+      border-color: var(--color-brand);
+      background-color: rgba(0, 113, 227, 0.04);
+    }
+
+    .factor-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--color-brand);
+    }
+
+    .factor-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.12px;
+    }
+
+    .checkin-btn-wrapper {
+      margin-top: auto;
+      padding-top: var(--space-xl);
+    }
+
+    /* ============================================
+       Check-in Completion
+       ============================================ */
+
+    .completion-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-4xl) var(--space-xl);
+      text-align: center;
+      flex: 1;
+    }
+
+    .completion-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.196px;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .summary-card {
+      width: 100%;
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      padding: var(--space-xl);
+      text-align: left;
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    .summary-text {
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .summary-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .summary-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: rgba(0, 113, 227, 0.08);
+      border-radius: var(--radius-micro);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.12px;
+    }
+
+    /* ============================================
+       Treehole
+       ============================================ */
+
+    .treehole-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-md);
+      height: var(--safe-area-top);
+      flex-shrink: 0;
+    }
+
+    .treehole-back {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-brand);
+      cursor: pointer;
+    }
+
+    .treehole-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .treehole-content {
+      padding: var(--space-xl);
+      flex: 1;
+    }
+
+    .treehole-input-wrapper {
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    .treehole-input {
+      width: 100%;
+      min-height: 180px;
+      resize: none;
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+      border: none;
+      background: none;
+    }
+
+    .treehole-input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .treehole-footer {
+      padding: 0 var(--space-xl) var(--space-xl);
+      flex-shrink: 0;
+    }
+
+    .treehole-count {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      text-align: right;
+      margin-bottom: var(--space-md);
+      letter-spacing: -0.12px;
+    }
+
+    .treehole-privacy {
+      background: rgba(0, 113, 227, 0.06);
+      border-radius: var(--radius-standard);
+      padding: 12px var(--space-lg);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      letter-spacing: -0.12px;
+    }
+
+    .treehole-privacy .lock-icon {
+      width: 14px;
+      height: 14px;
+      color: var(--color-brand);
+      flex-shrink: 0;
+    }
+
+    .treehole-send {
+      width: 100%;
+      height: 52px;
+      background: var(--color-brand);
+      color: var(--color-text-inverse);
+      font-size: 17px;
+      font-weight: 400;
+      letter-spacing: normal;
+      border-radius: var(--radius-standard);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+
+    .treehole-send:hover {
+      background: var(--color-brand-hover);
+    }
+
+    .treehole-send:active {
+      background: var(--color-btn-active);
+    }
+
+    .treehole-send:disabled {
+      background: var(--color-btn-disabled);
+      cursor: not-allowed;
+    }
+
+    /* ============================================
+       Treehole Reply
+       ============================================ */
+
+    .reply-content {
+      padding: var(--space-xl);
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .user-content-card {
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      box-shadow: var(--shadow-card);
+    }
+
+    .user-content-label {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      margin-bottom: var(--space-sm);
+      letter-spacing: -0.12px;
+    }
+
+    .user-content-text {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      letter-spacing: -0.2px;
+    }
+
+    .ai-reply-card {
+      display: none;
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      border-left: 3px solid var(--color-brand);
+    }
+
+    .ai-reply-card.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .ai-reply-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .ai-reply-avatar {
+      width: 24px;
+      height: 24px;
+      color: var(--color-brand);
+    }
+
+    .ai-reply-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-brand);
+      letter-spacing: -0.12px;
+    }
+
+    .ai-reply-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--color-text-primary);
+      letter-spacing: -0.2px;
+    }
+
+    .reply-actions {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .reply-actions.visible {
+      display: flex;
+    }
+
+    .btn-primary-outline {
+      width: 100%;
+      height: 52px;
+      background: rgba(0, 113, 227, 0.08);
+      color: var(--color-brand);
+      font-size: 17px;
+      font-weight: 400;
+      letter-spacing: normal;
+      border-radius: var(--radius-standard);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-primary-outline:active {
+      background: rgba(0, 113, 227, 0.15);
+    }
+
+    .btn-text-secondary {
+      text-align: center;
+      color: var(--color-text-tertiary);
+      font-size: 15px;
+      padding: var(--space-md);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    /* ============================================
+       Mirror Page
+       ============================================ */
+
+    .mirror-header {
+      padding: var(--space-3xl) var(--space-xl) var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .mirror-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.196px;
+    }
+
+    .mirror-settings {
+      width: 24px;
+      height: 24px;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+    }
+
+    .period-tabs {
+      display: flex;
+      gap: var(--space-sm);
+      padding: 0 var(--space-xl);
+      margin-bottom: var(--space-xl);
+      flex-shrink: 0;
+    }
+
+    .period-tab {
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--color-card);
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.224px;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+
+    .period-tab.active {
+      background: var(--color-brand);
+      color: var(--color-text-inverse);
+    }
+
+    .mirror-content {
+      padding: 0 var(--space-xl) 100px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .report-summary-card {
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      border-left: 3px solid var(--color-brand);
+    }
+
+    .report-summary-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .report-summary-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--color-brand);
+    }
+
+    .report-summary-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-brand);
+      letter-spacing: -0.12px;
+    }
+
+    .report-summary-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--color-text-primary);
+      letter-spacing: -0.2px;
+    }
+
+    .report-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .report-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--space-md);
+    }
+
+    .chart-card {
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    #emotion-chart {
+      height: 120px;
+    }
+
+    .keywords-card {
+      background: var(--color-card);
+      border-radius: var(--radius-large);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .keyword-bubble {
+      color: var(--color-brand);
+      font-weight: 500;
+      padding: 4px 10px;
+    }
+
+    .factors-card {
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    .factor-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    .factor-bar:last-child {
+      margin-bottom: 0;
+    }
+
+    .factor-name {
+      font-size: 14px;
+      color: var(--color-text-primary);
+      min-width: 50px;
+      letter-spacing: -0.224px;
+    }
+
+    .factor-progress {
+      flex: 1;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .factor-fill {
+      height: 100%;
+      background: var(--color-brand);
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .factor-percent {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      min-width: 36px;
+      text-align: right;
+      letter-spacing: -0.12px;
+    }
+
+    .companion-entry {
+      background: var(--color-brand);
+      border-radius: var(--radius-standard);
+      padding: var(--space-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .companion-entry:active {
+      transform: scale(0.985);
+      background: var(--color-brand-hover);
+    }
+
+    .companion-entry-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--color-text-inverse);
+    }
+
+    .companion-entry-content {
+      flex: 1;
+    }
+
+    .companion-entry-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-inverse);
+      letter-spacing: -0.374px;
+      margin-bottom: 4px;
+    }
+
+    .companion-entry-desc {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.75);
+      letter-spacing: -0.224px;
+    }
+
+    .companion-entry-arrow {
+      width: 18px;
+      height: 18px;
+      color: var(--color-text-inverse);
+    }
+
+    /* ============================================
+       AI Companion Chat
+       ============================================ */
+
+    .companion-page {
+      height: 100%;
+    }
+
+    .companion-header {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-md);
+      height: var(--safe-area-top);
+      background: var(--color-card);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+
+    .companion-back {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-brand);
+      cursor: pointer;
+    }
+
+    .companion-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.374px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .companion-disclaimer {
+      background: rgba(0, 113, 227, 0.06);
+      padding: 8px var(--space-xl);
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      text-align: center;
+      letter-spacing: -0.12px;
+      flex-shrink: 0;
+    }
+
+    .companion-messages {
+      padding: var(--space-xl);
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 100px;
+    }
+
+    .message-item {
+      display: flex;
+      margin-bottom: var(--space-lg);
+      align-items: flex-end;
+    }
+
+    .message-item.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 24px;
+      height: 24px;
+      margin-right: var(--space-sm);
+      color: var(--color-brand);
+    }
+
+    .message-item.user .message-avatar {
+      margin-right: 0;
+      margin-left: var(--space-sm);
+    }
+
+    .companion-input-area {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-md) var(--space-xl);
+      padding-bottom: calc(var(--space-md) + var(--safe-area-bottom));
+      display: flex;
+      gap: var(--space-md);
+      align-items: flex-end;
+    }
+
+    .companion-input {
+      flex: 1;
+      background: var(--color-bg);
+      border-radius: var(--radius-comfortable);
+      padding: 10px 14px;
+      font-size: 17px;
+      max-height: 100px;
+      resize: none;
+      overflow-y: auto;
+      letter-spacing: -0.374px;
+      border: 1px solid var(--color-border);
+    }
+
+    .companion-input:focus {
+      border-color: var(--color-brand);
+      outline: none;
+    }
+
+    .companion-input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .companion-send {
+      width: 40px;
+      height: 40px;
+      background: var(--color-brand);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-inverse);
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+
+    .companion-send:hover {
+      background: var(--color-brand-hover);
+    }
+
+    .companion-send:disabled {
+      background: var(--color-btn-disabled);
+      cursor: not-allowed;
+    }
+
+    .companion-send svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ============================================
+       Resource Page
+       ============================================ */
+
+    .resource-header {
+      padding: var(--space-3xl) var(--space-xl) var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .resource-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: 0.196px;
+    }
+
+    .resource-content {
+      padding: 0 var(--space-xl) 100px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .resource-section {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .resource-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      letter-spacing: -0.224px;
+    }
+
+    .resource-section-title svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-brand);
+    }
+
+    .hotline-card {
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    .hotline-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      letter-spacing: -0.374px;
+    }
+
+    .hotline-name svg {
+      width: 18px;
+      height: 18px;
+      color: var(--color-brand);
+    }
+
+    .hotline-time {
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 4px;
+      letter-spacing: -0.224px;
+    }
+
+    .hotline-phone {
+      font-size: 15px;
+      color: var(--color-brand);
+      font-weight: 500;
+      letter-spacing: -0.374px;
+    }
+
+    .meditation-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    .meditation-card {
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      padding: var(--space-lg);
+      text-align: center;
+      box-shadow: var(--shadow-card);
+    }
+
+    .meditation-icon {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto var(--space-sm);
+      color: var(--color-brand);
+    }
+
+    .meditation-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+      letter-spacing: -0.374px;
+    }
+
+    .meditation-duration {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.12px;
+    }
+
+    .article-card {
+      background: var(--color-card);
+      border-radius: var(--radius-standard);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+      box-shadow: var(--shadow-card);
+    }
+
+    .article-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-sm);
+      letter-spacing: -0.374px;
+    }
+
+    .article-tags {
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .article-tag {
+      font-size: 12px;
+      color: var(--color-brand);
+      background: rgba(0, 113, 227, 0.08);
+      padding: 4px 10px;
+      border-radius: var(--radius-micro);
+      letter-spacing: -0.12px;
+    }
+
+    /* ============================================
+       Status Bar Icons
+       ============================================ */
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-primary);
+    }
+
+    .status-icon.wifi {
+      width: 14px;
+      height: 14px;
+    }
+
+    .status-icon.battery {
+      width: 20px;
+      height: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- SVG Icon Templates (hidden) -->
+  <svg style="display: none;">
+    <!-- Lock Icon -->
+    <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </symbol>
+
+    <!-- Pencil/Write Icon -->
+    <symbol id="icon-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+    </symbol>
+
+    <!-- Book/Document Icon -->
+    <symbol id="icon-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </symbol>
+
+    <!-- Mirror/Reflection Icon -->
+    <symbol id="icon-mirror" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 2a7 7 0 0 0-7 7c0 3 2 5.5 5 6.5"/>
+      <path d="M12 22a7 7 0 0 0 7-7c0-3-2-5.5-5-6.5"/>
+      <line x1="12" y1="2" x2="12" y2="22"/>
+    </symbol>
+
+    <!-- Tree/Nature Icon -->
+    <symbol id="icon-tree" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22v-7"/>
+      <path d="M9 9V3"/>
+      <path d="M15 9V3"/>
+      <path d="M12 9l-4 4"/>
+      <path d="M12 9l4 4"/>
+      <path d="M12 3l-6 6"/>
+      <path d="M12 3l6 6"/>
+      <path d="M12 3l-3 3"/>
+      <path d="M12 3l3 3"/>
+      <circle cx="12" cy="5" r="3"/>
+    </symbol>
+
+    <!-- Wave/Water Icon -->
+    <symbol id="icon-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 12c1.5-1.5 3-2 4.5-2s3 .5 4.5 2 3 2 4.5 2 3-.5 4.5-2"/>
+      <path d="M2 17c1.5-1.5 3-2 4.5-2s3 .5 4.5 2 3 2 4.5 2 3-.5 4.5-2"/>
+      <path d="M2 7c1.5-1.5 3-2 4.5-2s3 .5 4.5 2 3 2 4.5 2 3-.5 4.5-2"/>
+    </symbol>
+
+    <!-- Sun/Today Icon -->
+    <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </symbol>
+
+    <!-- Microphone Icon -->
+    <symbol id="icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+      <line x1="12" y1="19" x2="12" y2="23"/>
+      <line x1="8" y1="23" x2="16" y2="23"/>
+    </symbol>
+
+    <!-- Chat/Comment Icon -->
+    <symbol id="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </symbol>
+
+    <!-- Settings/Gear Icon -->
+    <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </symbol>
+
+    <!-- Arrow Right Icon -->
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </symbol>
+
+    <!-- Arrow Left/Back Icon -->
+    <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"/>
+      <polyline points="12 19 5 12 12 5"/>
+    </symbol>
+
+    <!-- Sparkle/Stars Icon -->
+    <symbol id="icon-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/>
+      <path d="M5 19l.5 1.5L7 21l-1.5.5L5 23l-.5-1.5L3 21l1.5-.5L5 19z"/>
+      <path d="M19 5l.5 1.5L21 7l-1.5.5L19 9l-.5-1.5L17 7l1.5-.5L19 5z"/>
+    </symbol>
+
+    <!-- Heart Icon -->
+    <symbol id="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </symbol>
+
+    <!-- Calm/Zen Icon -->
+    <symbol id="icon-calm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+      <line x1="9" y1="9" x2="9.01" y2="9"/>
+      <line x1="15" y1="9" x2="15.01" y2="9"/>
+    </symbol>
+
+    <!-- Meditation Icon -->
+    <symbol id="icon-meditation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="6" r="4"/>
+      <path d="M12 10v4"/>
+      <path d="M8 14l-2 8"/>
+      <path d="M16 14l2 8"/>
+      <path d="M8 18h8"/>
+    </symbol>
+
+    <!-- Wind/Air Icon -->
+    <symbol id="icon-wind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+    </symbol>
+
+    <!-- Phone/Call Icon -->
+    <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </symbol>
+
+    <!-- Help/Emergency Icon -->
+    <symbol id="icon-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </symbol>
+
+    <!-- Signal/Wifi Icon -->
+    <symbol id="icon-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+      <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+      <line x1="12" y1="20" x2="12.01" y2="20"/>
+    </symbol>
+
+    <!-- Battery Icon -->
+    <symbol id="icon-battery" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1" y="6" width="18" height="12" rx="2" ry="2"/>
+      <line x1="23" y1="13" x2="23" y2="11"/>
+      <rect x="3" y="8" width="10" height="8" fill="currentColor" stroke="none"/>
+    </symbol>
+
+    <!-- Cellular Icon -->
+    <symbol id="icon-cellular" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="2" width="4" height="20" rx="1"/>
+      <rect x="10" y="6" width="4" height="16" rx="1"/>
+      <rect x="15" y="10" width="4" height="12" rx="1"/>
+    </symbol>
+  </svg>
+
+  <!-- API Key 输入 Banner（容器外） -->
+  <div id="apikey-banner" class="api-key-banner">
+    <span>API Key:</span>
+    <input type="password" id="apikey-input" placeholder="输入 Claude API Key">
+    <button id="btn-save-apikey">保存</button>
+  </div>
+
+  <!-- 手机容器 -->
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="status-icons">
+        <span class="status-icon wifi">
+          <svg><use href="#icon-signal"/></svg>
+        </span>
+        <span class="status-icon cellular">
+          <svg><use href="#icon-cellular"/></svg>
+        </span>
+        <span class="status-icon battery">
+          <svg><use href="#icon-battery"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- 页面内容区域 -->
+    <div class="phone-screen">
+
+      <!-- ==========================================
+           Splash 启动页
+           ========================================== -->
+      <div id="page-splash" class="page-view">
+        <div class="splash">
+          <div class="splash-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-brand);">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 2a7 7 0 0 0-7 7c0 3 2 5.5 5 6.5"/>
+              <path d="M12 22a7 7 0 0 0 7-7c0-3-2-5.5-5-6.5"/>
+              <line x1="12" y1="2" x2="12" y2="22"/>
+            </svg>
+          </div>
+          <div class="splash-title">群声镜</div>
+          <div class="splash-subtitle">MindMirror</div>
+          <div class="splash-slogan">读懂你的情绪</div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           记录入口页
+           ========================================== -->
+      <div id="page-index" class="page-view">
+        <div class="entry-header">
+          <div class="entry-greeting" id="greeting">今天，你感觉怎么样？</div>
+          <div class="entry-subtitle">记录，是改变的开始</div>
+        </div>
+
+        <div class="entry-cards">
+          <button class="entry-card" id="btn-checkin">
+            <span class="entry-card-icon">
+              <svg><use href="#icon-pencil"/></svg>
+            </span>
+            <div class="entry-card-title">心理状态打卡</div>
+            <div class="entry-card-desc">用几步描述此刻的你</div>
+          </button>
+          <button class="entry-card" id="btn-treehole">
+            <span class="entry-card-icon">
+              <svg><use href="#icon-tree"/></svg>
+            </span>
+            <div class="entry-card-title">心情树洞</div>
+            <div class="entry-card-desc">想说的都可以写在这里</div>
+          </button>
+        </div>
+
+        <div class="history-section">
+          <div class="history-title">最近记录</div>
+          <div id="history-list">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           打卡流程页
+           ========================================== -->
+      <div id="page-checkin" class="page-view checkin-page">
+        <div class="checkin-header">
+          <div class="checkin-back" id="checkin-back">
+            <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
+          </div>
+          <div class="checkin-progress">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <span class="progress-text" style="font-size: 11px; color: var(--color-text-tertiary); margin-left: 4px;">1 / 4</span>
+          </div>
+          <div style="width: 44px;"></div>
+        </div>
+
+        <div class="checkin-content">
+          <!-- Step 1: 时间维度 -->
+          <div class="checkin-step active" id="checkin-step-1">
+            <div class="checkin-question">你想记录的是？</div>
+            <div class="time-option">
+              <div class="time-card" data-dimension="now">
+                <div class="time-card-icon">
+                  <svg><use href="#icon-wave"/></svg>
+                </div>
+                <div>
+                  <div class="time-card-title">此刻的感受</div>
+                  <div class="time-card-desc">记录当下这一刻</div>
+                </div>
+              </div>
+              <div class="time-card" data-dimension="today">
+                <div class="time-card-icon">
+                  <svg><use href="#icon-sun"/></svg>
+                </div>
+                <div>
+                  <div class="time-card-title">今天整体感受</div>
+                  <div class="time-card-desc">回顾今天的心情</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: 情绪量级 -->
+          <div class="checkin-step" id="checkin-step-2">
+            <div class="checkin-question">此刻大致是什么感觉？</div>
+            <div id="emotion-level-cards">
+              <!-- 动态渲染 -->
+            </div>
+          </div>
+
+          <!-- Step 3: 情绪关键词 -->
+          <div class="checkin-step" id="checkin-step-3">
+            <div class="checkin-question">哪些词最能描述<br>你现在的感受？</div>
+            <div id="selected-count">已选 0 / 5</div>
+            <div id="emotion-tags">
+              <!-- 动态渲染 -->
+            </div>
+            <div class="checkin-btn-wrapper">
+              <button class="btn-primary" id="btn-keywords-next">下一步</button>
+            </div>
+          </div>
+
+          <!-- Step 4: 影响因素 -->
+          <div class="checkin-step" id="checkin-step-4">
+            <div class="checkin-question">对你影响最大的是？</div>
+            <div id="factor-cards">
+              <!-- 动态渲染 -->
+            </div>
+            <div class="checkin-btn-wrapper">
+              <button class="btn-primary" id="btn-factor-done">完成记录</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           打卡完成页
+           ========================================== -->
+      <div id="page-checkin-complete" class="page-view">
+        <div class="completion-content">
+          <div class="completion-title">记录完成</div>
+
+          <div class="summary-card" id="summary-card">
+            <!-- 动态渲染 -->
+          </div>
+
+          <div class="privacy-hint" style="width: 100%; margin-bottom: var(--space-xl);">
+            <svg class="lock-icon"><use href="#icon-lock"/></svg>
+            已匿名记录，仅参与群体分析，不关联个人身份
+          </div>
+
+          <button class="btn-primary" id="btn-continue-treehole">继续，写点什么 →</button>
+          <button class="btn-text-secondary" id="btn-finish">完成，先这样</button>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           树洞输入页
+           ========================================== -->
+      <div id="page-treehole" class="page-view">
+        <div class="treehole-header">
+          <div class="treehole-back" id="treehole-back">
+            <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
+          </div>
+          <div class="treehole-title">心情树洞</div>
+          <div style="width: 44px;"></div>
+        </div>
+
+        <div class="treehole-content">
+          <div class="treehole-input-wrapper">
+            <textarea class="treehole-input" id="treehole-input" placeholder="今天想说点什么？" maxlength="1000"></textarea>
+          </div>
+        </div>
+
+        <div class="treehole-footer">
+          <div class="treehole-privacy">
+            <svg class="lock-icon"><use href="#icon-lock"/></svg>
+            <span>内容完全匿名，仅参与群体分析</span>
+          </div>
+          <div class="treehole-count" id="treehole-count">0 / 500</div>
+          <button class="treehole-send" id="btn-treehole-send" disabled>
+            <span>发送</span>
+            <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           树洞 AI 回复页
+           ========================================== -->
+      <div id="page-treehole-reply" class="page-view">
+        <div class="treehole-header">
+          <div class="treehole-back" id="treehole-reply-back">
+            <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
+          </div>
+          <div class="treehole-title">心情树洞</div>
+          <div style="width: 44px;"></div>
+        </div>
+
+        <div class="reply-content">
+          <div class="user-content-card">
+            <div class="user-content-label">你写道：</div>
+            <div class="user-content-text" id="user-content"></div>
+          </div>
+
+          <div class="ai-reply-card" id="ai-reply-card">
+            <div class="ai-reply-header">
+              <span class="ai-reply-avatar">
+                <svg><use href="#icon-mirror"/></svg>
+              </span>
+              <span class="ai-reply-name">MindMirror</span>
+            </div>
+            <div class="ai-reply-text" id="ai-reply-content"></div>
+          </div>
+
+          <div class="reply-actions" id="reply-actions">
+            <button class="btn-primary-outline" id="btn-view-mirror">去看看我的镜像</button>
+            <button class="btn-text-secondary" id="btn-write-more">再写一段</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           镜像页
+           ========================================== -->
+      <div id="page-mirror" class="page-view">
+        <div class="mirror-header">
+          <div class="mirror-title">镜像</div>
+          <div class="mirror-settings">
+            <svg><use href="#icon-settings"/></svg>
+          </div>
+        </div>
+
+        <div class="period-tabs">
+          <button class="period-tab active" data-period="week">本周</button>
+          <button class="period-tab" data-period="month">本月</button>
+        </div>
+
+        <div class="mirror-content">
+          <div class="report-summary-card">
+            <div class="report-summary-header">
+              <span class="report-summary-icon">
+                <svg><use href="#icon-mirror"/></svg>
+              </span>
+              <span class="report-summary-title">本周情绪小结</span>
+            </div>
+            <div class="report-summary-text" id="report-summary"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">情绪趋势</div>
+            <div class="chart-card">
+              <canvas id="emotion-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">情绪关键词</div>
+            <div class="keywords-card" id="report-keywords">
+              <!-- 动态渲染 -->
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">影响因素</div>
+            <div class="factors-card" id="report-factors">
+              <!-- 动态渲染 -->
+            </div>
+          </div>
+
+          <div class="companion-entry" id="btn-open-companion">
+            <div class="companion-entry-icon">
+              <svg><use href="#icon-chat"/></svg>
+            </div>
+            <div class="companion-entry-content">
+              <div class="companion-entry-title">关于这周，想聊聊吗？</div>
+              <div class="companion-entry-desc">AI 伴侣在这里倾听你</div>
+            </div>
+            <div class="companion-entry-arrow">
+              <svg><use href="#icon-arrow-right"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           AI 伴侣对话页
+           ========================================== -->
+      <div id="page-companion" class="page-view companion-page">
+        <div class="companion-header">
+          <div class="companion-back" id="companion-back">
+            <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
+          </div>
+          <div class="companion-title">AI 心理伴侣</div>
+          <div style="width: 44px;"></div>
+        </div>
+
+        <div class="companion-disclaimer">
+          AI 伴侣不能替代专业心理咨询
+        </div>
+
+        <div class="companion-messages" id="companion-messages">
+          <!-- 动态渲染 -->
+        </div>
+
+        <div class="companion-input-area">
+          <textarea class="companion-input" id="companion-input" placeholder="说点什么…" rows="1"></textarea>
+          <button class="companion-send" id="btn-companion-send" disabled>
+            <svg><use href="#icon-arrow-right"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           资源页
+           ========================================== -->
+      <div id="page-resource" class="page-view">
+        <div class="resource-header">
+          <div class="resource-title">资源</div>
+        </div>
+
+        <div class="resource-content">
+          <div class="resource-section">
+            <div class="resource-section-title">
+              <svg><use href="#icon-help"/></svg>
+              <span>校内心理热线</span>
+            </div>
+            <div class="hotline-card">
+              <div class="hotline-name">
+                <svg><use href="#icon-phone"/></svg>
+                <span>心理健康中心</span>
+              </div>
+              <div class="hotline-time">周一至周五 9:00 - 17:00</div>
+              <div class="hotline-phone">010-XXXX-XXXX</div>
+            </div>
+          </div>
+
+          <div class="resource-section">
+            <div class="resource-section-title">
+              <svg><use href="#icon-meditation"/></svg>
+              <span>冥想练习</span>
+            </div>
+            <div class="meditation-cards">
+              <div class="meditation-card">
+                <div class="meditation-icon">
+                  <svg><use href="#icon-wind"/></svg>
+                </div>
+                <div class="meditation-name">正念呼吸</div>
+                <div class="meditation-duration">5 分钟</div>
+              </div>
+              <div class="meditation-card">
+                <div class="meditation-icon">
+                  <svg><use href="#icon-meditation"/></svg>
+                </div>
+                <div class="meditation-name">身体扫描</div>
+                <div class="meditation-duration">10 分钟</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="resource-section">
+            <div class="resource-section-title">
+              <svg><use href="#icon-book"/></svg>
+              <span>科普文章</span>
+            </div>
+            <div class="article-card">
+              <div class="article-title">如何管理考试焦虑</div>
+              <div class="article-tags">
+                <span class="article-tag">#焦虑管理</span>
+                <span class="article-tag">#学业压力</span>
+              </div>
+            </div>
+            <div class="article-card">
+              <div class="article-title">睡眠不好？试试这些方法</div>
+              <div class="article-tags">
+                <span class="article-tag">#睡眠改善</span>
+              </div>
+            </div>
+            <div class="article-card">
+              <div class="article-title">建立健康的人际关系边界</div>
+              <div class="article-tags">
+                <span class="article-tag">#人际关系</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           底部 Tab 导航
+           ========================================== -->
+      <nav class="tab-bar">
+        <div class="tab-item active" data-tab="record">
+          <span class="tab-icon">
+            <svg width="24" height="24"><use href="#icon-pencil"/></svg>
+          </span>
+          <span class="tab-label">记录</span>
+        </div>
+        <div class="tab-item" data-tab="mirror">
+          <span class="tab-icon">
+            <svg width="24" height="24"><use href="#icon-mirror"/></svg>
+          </span>
+          <span class="tab-label">镜像</span>
+        </div>
+        <div class="tab-item" data-tab="resource">
+          <span class="tab-icon">
+            <svg width="24" height="24"><use href="#icon-book"/></svg>
+          </span>
+          <span class="tab-label">资源</span>
+        </div>
+      </nav>
+
+    </div><!-- /.phone-screen -->
+  </div><!-- /.phone-container -->
+
+  <script src="js/ai.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // 打卡页面 Step 1 时间维度选择
+    document.querySelectorAll('.time-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.time-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        CheckInState.data.timeDimension = card.dataset.dimension;
+        setTimeout(() => showCheckInStep(2), 300);
+      });
+    });
+
+    // 页面加载时渲染镜像报告
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        UI.renderMirrorReport('week');
+      }, 100);
+    });
+  </script>
+</body>
+</html>

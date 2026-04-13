@@ -1,0 +1,713 @@
+/* ============================================
+   群声镜 MindMirror · 学生端
+   Apple Design System inspired global styles
+   ============================================ */
+
+:root {
+  /* ============================================
+     Color Palette
+     ============================================ */
+
+  /* Primary backgrounds */
+  --color-bg: #f5f5f7;           /* Apple light gray */
+  --color-card: #ffffff;          /* Pure white cards */
+  --color-dark: #000000;          /* Pure black */
+
+  /* Brand - Apple Blue as primary accent */
+  --color-brand: #0071e3;         /* Apple Blue */
+  --color-brand-hover: #0077ED;   /* Slightly brighter on hover */
+  --color-brand-light: #2997ff;   /* Bright blue for dark backgrounds */
+
+  /* Text colors */
+  --color-text-primary: #1d1d1f;   /* Near black */
+  --color-text-secondary: rgba(0, 0, 0, 0.8);  /* Black 80% */
+  --color-text-tertiary: rgba(0, 0, 0, 0.48);   /* Black 48% */
+  --color-text-inverse: #ffffff;  /* White text on dark */
+
+  /* UI elements */
+  --color-border: rgba(0, 0, 0, 0.04);  /* Subtle border */
+  --color-border-strong: rgba(0, 0, 0, 0.1);
+  --color-overlay: rgba(210, 210, 215, 0.64);
+
+  /* Button states */
+  --color-btn-hover: rgba(0, 0, 0, 0.04);
+  --color-btn-active: #ededf2;
+  --color-btn-disabled: rgba(0, 0, 0, 0.12);
+
+  /* ============================================
+     Typography
+     ============================================ */
+
+  --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* Display (20px+) */
+  --font-display-hero: 600 56px/1.07 var(--font-family);
+  --font-display-section: 600 40px/1.10 var(--font-family);
+  --font-display-tile: 400 28px/1.14 var(--font-family);
+  --font-display-card: 700 21px/1.19 var(--font-family);
+
+  /* Body (below 20px) */
+  --font-body: 400 17px/1.47 var(--font-family);
+  --font-body-emphasis: 600 17px/1.24 var(--font-family);
+  --font-button: 400 17px/1.00 var(--font-family);
+  --font-link: 400 14px/1.43 var(--font-family);
+  --font-caption: 400 14px/1.29 var(--font-family);
+  --font-micro: 400 12px/1.33 var(--font-family);
+
+  /* ============================================
+     Spacing System (8px base)
+     ============================================ */
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 40px;
+  --space-5xl: 48px;
+  --space-6xl: 56px;
+
+  /* ============================================
+     Border Radius
+     ============================================ */
+
+  --radius-micro: 5px;     /* Small containers, link tags */
+  --radius-standard: 8px;   /* Buttons, product cards */
+  --radius-comfortable: 11px;  /* Search inputs, filter buttons */
+  --radius-large: 12px;     /* Feature panels */
+  --radius-pill: 980px;     /* Pill CTAs */
+
+  /* ============================================
+     Shadows
+     ============================================ */
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);  /* Subtle card lift */
+  --shadow-elevated: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;  /* Apple-style soft shadow */
+  --shadow-button: 0 2px 8px rgba(0, 113, 227, 0.25);  /* Blue glow for CTAs */
+
+  /* ============================================
+     Transitions
+     ============================================ */
+
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease-out;
+
+  /* ============================================
+     Safe Areas
+     ============================================ */
+
+  --safe-area-top: 44px;
+  --safe-area-bottom: 34px;
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.374px;
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100%;
+  background-color: #E0E0E0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 0;
+}
+
+body.has-banner {
+  padding-top: 68px;
+}
+
+/* ============================================
+   Phone Container
+   ============================================ */
+
+.phone-container {
+  width: 390px;
+  height: 844px;
+  background-color: var(--color-bg);
+  border-radius: 44px;
+  box-shadow:
+    0 0 0 12px #1d1d1f,
+    0 0 0 14px #2a2a2d,
+    0 24px 80px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================
+   Status Bar
+   ============================================ */
+
+.status-bar {
+  height: var(--safe-area-top);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background-color: var(--color-bg);
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+.status-bar .time {
+  color: var(--color-text-primary);
+}
+
+.status-bar .icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+/* ============================================
+   API Key Banner (outside phone container)
+   ============================================ */
+
+.api-key-banner {
+  background: var(--color-dark);
+  color: var(--color-text-inverse);
+  padding: 12px 16px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 0 0 12px 12px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  letter-spacing: normal;
+}
+
+.api-key-banner input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--color-text-inverse);
+  font-size: 13px;
+  letter-spacing: normal;
+}
+
+.api-key-banner input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.api-key-banner button {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: var(--color-text-inverse);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: normal;
+}
+
+/* ============================================
+   Page Views
+   ============================================ */
+
+.page-view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+
+.page-view.active {
+  display: flex;
+}
+
+/* ============================================
+   Typography Classes
+   ============================================ */
+
+.text-hero {
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.28px;
+}
+
+.text-section {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.10;
+}
+
+.text-title {
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: 0.196px;
+}
+
+.text-heading {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.19;
+  letter-spacing: 0.231px;
+}
+
+.text-subhead {
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.19;
+  letter-spacing: 0.231px;
+}
+
+.text-large-title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.374px;
+}
+
+.text-body {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.47;
+  letter-spacing: -0.374px;
+}
+
+.text-body-emphasis {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.24;
+  letter-spacing: -0.374px;
+}
+
+.text-button {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.00;
+  letter-spacing: normal;
+}
+
+.text-link {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: -0.224px;
+}
+
+.text-caption {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.29;
+  letter-spacing: -0.224px;
+}
+
+.text-micro {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.33;
+  letter-spacing: -0.12px;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn-primary {
+  width: 100%;
+  height: 52px;
+  background-color: var(--color-brand);
+  color: var(--color-text-inverse);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.00;
+  letter-spacing: normal;
+  border-radius: var(--radius-standard);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-brand-hover);
+}
+
+.btn-primary:active {
+  background-color: var(--color-btn-active);
+  transform: scale(0.985);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-btn-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  width: 100%;
+  height: 52px;
+  background-color: transparent;
+  color: var(--color-brand);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.00;
+  letter-spacing: normal;
+  border-radius: var(--radius-standard);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:active {
+  background-color: var(--color-btn-hover);
+}
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  background-color: transparent;
+  color: var(--color-brand);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: -0.224px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-brand);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-pill:hover {
+  background-color: var(--color-brand);
+  color: var(--color-text-inverse);
+}
+
+.btn-text {
+  color: var(--color-brand);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: -0.224px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: opacity var(--transition-fast);
+}
+
+.btn-text:active {
+  opacity: 0.6;
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+
+.card {
+  background-color: var(--color-card);
+  border-radius: var(--radius-large);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.card-interactive {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.card-interactive:active {
+  transform: scale(0.985);
+}
+
+/* ============================================
+   Tab Bar
+   ============================================ */
+
+.tab-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(60px + var(--safe-area-bottom));
+  padding-bottom: var(--safe-area-bottom);
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-top: 6px;
+  z-index: 100;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 20px;
+  color: var(--color-text-tertiary);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: color var(--transition-normal);
+}
+
+.tab-item.active {
+  color: var(--color-brand);
+}
+
+.tab-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* ============================================
+   Input Fields
+   ============================================ */
+
+.input-search {
+  width: 100%;
+  height: 44px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-comfortable);
+  padding: 0 14px;
+  font-size: 17px;
+  color: var(--color-text-primary);
+  letter-spacing: -0.374px;
+  transition: border-color var(--transition-fast);
+}
+
+.input-search:focus {
+  border-color: var(--color-brand);
+  outline: none;
+}
+
+.input-search::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+textarea.input-search {
+  height: auto;
+  min-height: 180px;
+  padding: 14px;
+  resize: none;
+  line-height: 1.5;
+}
+
+/* ============================================
+   Tags
+   ============================================ */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-micro);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  letter-spacing: -0.224px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tag:hover {
+  border-color: var(--color-brand);
+}
+
+.tag.selected {
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-text-inverse);
+}
+
+.tag.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ============================================
+   Progress Indicator
+   ============================================ */
+
+.progress-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-border-strong);
+  transition: all var(--transition-normal);
+}
+
+.progress-dot.active {
+  background-color: var(--color-brand);
+  transform: scale(1.2);
+}
+
+.progress-dot.completed {
+  background-color: var(--color-brand);
+}
+
+/* ============================================
+   Privacy Hint
+   ============================================ */
+
+.privacy-hint {
+  background-color: rgba(0, 113, 227, 0.08);
+  border-radius: var(--radius-standard);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.12px;
+}
+
+/* ============================================
+   Message Bubbles
+   ============================================ */
+
+.message-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.2px;
+}
+
+.message-bubble.user {
+  background-color: var(--color-brand);
+  color: var(--color-text-inverse);
+  border-bottom-right-radius: 6px;
+}
+
+.message-bubble.ai {
+  background-color: var(--color-card);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-card);
+  border-bottom-left-radius: 6px;
+}
+
+/* ============================================
+   Typing Indicator
+   ============================================ */
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.typing-indicator span {
+  width: 7px;
+  height: 7px;
+  background-color: var(--color-text-tertiary);
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.hidden {
+  display: none !important;
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-brand {
+  color: var(--color-brand);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
