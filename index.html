@@ -134,13 +134,6 @@
       background-color: var(--color-btn-hover);
     }
 
-    .entry-card-icon {
-      width: 48px;
-      height: 48px;
-      margin-bottom: var(--space-md);
-      color: var(--color-brand);
-    }
-
     .entry-card-title {
       font-size: 17px;
       font-weight: 600;
@@ -166,17 +159,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: var(--space-md);
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-    }
-
-    .history-title::before,
-    .history-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--color-border-strong);
+      text-align: center;
     }
 
     .history-item {
@@ -185,6 +168,30 @@
       gap: var(--space-sm);
       padding: 14px 0;
       border-bottom: 1px solid var(--color-border);
+    }
+
+    .history-item-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .history-delete {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      opacity: 0;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .history-item:hover .history-delete {
+      opacity: 1;
     }
 
     .history-time {
@@ -345,7 +352,7 @@
       box-shadow: var(--shadow-card);
       cursor: pointer;
       transition: all var(--transition-normal);
-      border-left: 4px solid;
+      border: none;
     }
 
     .emotion-card:hover {
@@ -357,13 +364,20 @@
     }
 
     .emotion-card.selected {
-      border-color: var(--color-brand);
       background-color: rgba(0, 113, 227, 0.04);
+    }
+
+    .emotion-indicator {
+      width: 4px;
+      height: 32px;
+      border-radius: 2px;
+      flex-shrink: 0;
     }
 
     .emotion-icon {
       width: 28px;
       height: 28px;
+      flex-shrink: 0;
     }
 
     .emotion-text {
@@ -400,51 +414,10 @@
 
     /* Factor cards */
     #factor-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-md);
-      margin-bottom: var(--space-xl);
-    }
-
-    .factor-card {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      height: 80px;
-      background: var(--color-card);
-      border-radius: var(--radius-standard);
-      box-shadow: var(--shadow-card);
-      cursor: pointer;
-      transition: all var(--transition-normal);
-      border: 2px solid transparent;
-    }
-
-    .factor-card:hover {
-      box-shadow: var(--shadow-elevated);
-    }
-
-    .factor-card:active {
-      transform: scale(0.97);
-    }
-
-    .factor-card.selected {
-      border-color: var(--color-brand);
-      background-color: rgba(0, 113, 227, 0.04);
-    }
-
-    .factor-icon {
-      width: 28px;
-      height: 28px;
-      color: var(--color-brand);
-    }
-
-    .factor-text {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--color-text-primary);
-      letter-spacing: -0.12px;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
     }
 
     .checkin-btn-wrapper {
@@ -673,7 +646,6 @@
       padding: var(--space-xl);
       margin-bottom: var(--space-xl);
       box-shadow: var(--shadow-card);
-      border-left: 3px solid var(--color-brand);
     }
 
     .ai-reply-card.visible {
@@ -810,7 +782,6 @@
       padding: var(--space-xl);
       margin-bottom: var(--space-xl);
       box-shadow: var(--shadow-card);
-      border-left: 3px solid var(--color-brand);
     }
 
     .report-summary-header {
@@ -818,12 +789,6 @@
       align-items: center;
       gap: var(--space-sm);
       margin-bottom: var(--space-md);
-    }
-
-    .report-summary-icon {
-      width: 20px;
-      height: 20px;
-      color: var(--color-brand);
     }
 
     .report-summary-title {
@@ -919,7 +884,6 @@
       height: 100%;
       background: var(--color-brand);
       border-radius: 3px;
-      transition: width 0.6s ease;
     }
 
     .factor-percent {
@@ -1058,9 +1022,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(255, 255, 255, 0.95);
       border-top: 1px solid var(--color-border);
       padding: var(--space-md) var(--space-xl);
       padding-bottom: calc(var(--space-md) + var(--safe-area-bottom));
@@ -1154,12 +1116,6 @@
       align-items: center;
       gap: var(--space-sm);
       letter-spacing: -0.224px;
-    }
-
-    .resource-section-title svg {
-      width: 16px;
-      height: 16px;
-      color: var(--color-brand);
     }
 
     .hotline-card {
@@ -1512,16 +1468,10 @@
 
         <div class="entry-cards">
           <button class="entry-card" id="btn-checkin">
-            <span class="entry-card-icon">
-              <svg><use href="#icon-pencil"/></svg>
-            </span>
             <div class="entry-card-title">心理状态打卡</div>
             <div class="entry-card-desc">用几步描述此刻的你</div>
           </button>
           <button class="entry-card" id="btn-treehole">
-            <span class="entry-card-icon">
-              <svg><use href="#icon-tree"/></svg>
-            </span>
             <div class="entry-card-title">心情树洞</div>
             <div class="entry-card-desc">想说的都可以写在这里</div>
           </button>
@@ -1540,7 +1490,7 @@
            ========================================== -->
       <div id="page-checkin" class="page-view checkin-page">
         <div class="checkin-header">
-          <div class="checkin-back" id="checkin-back">
+          <div class="checkin-back" id="checkin-back" role="button" aria-label="返回">
             <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
           </div>
           <div class="checkin-progress">
@@ -1601,7 +1551,7 @@
 
           <!-- Step 4: 影响因素 -->
           <div class="checkin-step" id="checkin-step-4">
-            <div class="checkin-question">对你影响最大的是？</div>
+            <div class="checkin-question">是什么让你有这样的感受呢？</div>
             <div id="factor-cards">
               <!-- 动态渲染 -->
             </div>
@@ -1638,7 +1588,7 @@
            ========================================== -->
       <div id="page-treehole" class="page-view">
         <div class="treehole-header">
-          <div class="treehole-back" id="treehole-back">
+          <div class="treehole-back" id="treehole-back" role="button" aria-label="返回">
             <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
           </div>
           <div class="treehole-title">心情树洞</div>
@@ -1669,7 +1619,7 @@
            ========================================== -->
       <div id="page-treehole-reply" class="page-view">
         <div class="treehole-header">
-          <div class="treehole-back" id="treehole-reply-back">
+          <div class="treehole-back" id="treehole-reply-back" role="button" aria-label="返回">
             <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
           </div>
           <div class="treehole-title">心情树洞</div>
@@ -1718,9 +1668,6 @@
         <div class="mirror-content">
           <div class="report-summary-card">
             <div class="report-summary-header">
-              <span class="report-summary-icon">
-                <svg><use href="#icon-mirror"/></svg>
-              </span>
               <span class="report-summary-title">本周情绪小结</span>
             </div>
             <div class="report-summary-text" id="report-summary"></div>
@@ -1767,7 +1714,7 @@
            ========================================== -->
       <div id="page-companion" class="page-view companion-page">
         <div class="companion-header">
-          <div class="companion-back" id="companion-back">
+          <div class="companion-back" id="companion-back" role="button" aria-label="返回">
             <svg width="22" height="22"><use href="#icon-arrow-left"/></svg>
           </div>
           <div class="companion-title">AI 心理伴侣</div>
@@ -1784,7 +1731,7 @@
 
         <div class="companion-input-area">
           <textarea class="companion-input" id="companion-input" placeholder="说点什么…" rows="1"></textarea>
-          <button class="companion-send" id="btn-companion-send" disabled>
+          <button class="companion-send" id="btn-companion-send" disabled aria-label="发送">
             <svg><use href="#icon-arrow-right"/></svg>
           </button>
         </div>
@@ -1801,7 +1748,6 @@
         <div class="resource-content">
           <div class="resource-section">
             <div class="resource-section-title">
-              <svg><use href="#icon-help"/></svg>
               <span>校内心理热线</span>
             </div>
             <div class="hotline-card">
@@ -1816,7 +1762,6 @@
 
           <div class="resource-section">
             <div class="resource-section-title">
-              <svg><use href="#icon-meditation"/></svg>
               <span>冥想练习</span>
             </div>
             <div class="meditation-cards">
@@ -1839,7 +1784,6 @@
 
           <div class="resource-section">
             <div class="resource-section-title">
-              <svg><use href="#icon-book"/></svg>
               <span>科普文章</span>
             </div>
             <div class="article-card">
@@ -1869,19 +1813,19 @@
            底部 Tab 导航
            ========================================== -->
       <nav class="tab-bar">
-        <div class="tab-item active" data-tab="record">
+        <div class="tab-item active" data-tab="record" role="tab" aria-label="记录">
           <span class="tab-icon">
             <svg width="24" height="24"><use href="#icon-pencil"/></svg>
           </span>
           <span class="tab-label">记录</span>
         </div>
-        <div class="tab-item" data-tab="mirror">
+        <div class="tab-item" data-tab="mirror" role="tab" aria-label="镜像">
           <span class="tab-icon">
             <svg width="24" height="24"><use href="#icon-mirror"/></svg>
           </span>
           <span class="tab-label">镜像</span>
         </div>
-        <div class="tab-item" data-tab="resource">
+        <div class="tab-item" data-tab="resource" role="tab" aria-label="资源">
           <span class="tab-icon">
             <svg width="24" height="24"><use href="#icon-book"/></svg>
           </span>

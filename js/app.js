@@ -208,14 +208,30 @@ const UI = {
       upset: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>'
     };
 
-    container.innerHTML = MOCK_DATA.historyRecords.map(record => `
+    const deleteIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+
+    container.innerHTML = MOCK_DATA.historyRecords.map((record, idx) => `
       <div class="history-item">
-        <span class="history-time">${record.time}</span>
-        <span class="history-icon">${emotionSVGs[record.emotion] || emotionSVGs.neutral}</span>
-        <span class="history-text">${record.level}</span>
-        <span class="history-factor">· ${record.factor}</span>
+        <div class="history-item-content">
+          <span class="history-time">${record.time}</span>
+          <span class="history-icon">${emotionSVGs[record.emotion] || emotionSVGs.neutral}</span>
+          <span class="history-text">${record.level}</span>
+          <span class="history-factor">· ${record.factor}</span>
+        </div>
+        <span class="history-delete" data-index="${idx}" aria-label="删除">${deleteIcon}</span>
       </div>
     `).join('');
+
+    // Bind delete handlers
+    container.querySelectorAll('.history-delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.currentTarget.dataset.index);
+        if (confirm('确定要删除这条记录吗？')) {
+          MOCK_DATA.historyRecords.splice(idx, 1);
+          this.renderHistoryRecords();
+        }
+      });
+    });
   },
 
   // 渲染情绪关键词标签
@@ -258,27 +274,18 @@ const UI = {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const factors = [
-      { id: '学业', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>' },
-      { id: '人际关系', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
-      { id: '恋爱', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' },
-      { id: '家庭', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' },
-      { id: '兴趣爱好', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>' },
-      { id: '身体状态', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' },
-      { id: '其他', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' }
-    ];
+    const factors = ['学业', '人际关系', '恋爱', '家庭', '兴趣爱好', '身体状态', '其他'];
 
     container.innerHTML = factors.map(f => `
-      <button class="factor-card ${selectedFactors.includes(f.id) ? 'selected' : ''}" data-factor="${f.id}">
-        <span class="factor-icon">${f.icon}</span>
-        <span class="factor-text">${f.id}</span>
+      <button class="tag ${selectedFactors.includes(f) ? 'selected' : ''}" data-factor="${f}">
+        ${f}
       </button>
     `).join('');
 
     // 绑定点击事件
-    container.querySelectorAll('.factor-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const factor = card.dataset.factor;
+    container.querySelectorAll('.tag').forEach(tagEl => {
+      tagEl.addEventListener('click', () => {
+        const factor = tagEl.dataset.factor;
         const idx = selectedFactors.indexOf(factor);
         if (idx > -1) {
           selectedFactors.splice(idx, 1);
@@ -370,17 +377,15 @@ const UI = {
 
     const ctx = canvas.getContext('2d');
 
-    // 颜色映射
-    const getColor = (value) => {
-      const colors = [
-        '#90A4C8', // 1 - 很不愉快
-        '#C8D9F0', // 2
-        '#F5F5F5', // 3 - 不悲不喜
-        '#FFE4B5', // 4
-        '#FFD580'  // 5 - 非常愉快
-      ];
-      return colors[value - 1] || colors[2];
-    };
+    // 颜色映射 (CSS variables fallback)
+    const emotionColors = [
+      '#90A4C8', // 1 - 很不愉快
+      '#C8D9F0', // 2
+      '#E8E8ED', // 3 - 不悲不喜
+      '#FFE4B5', // 4
+      '#FFD580'  // 5 - 非常愉快
+    ];
+    const getColor = (value) => emotionColors[value - 1] || emotionColors[2];
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 140);
     gradient.addColorStop(0, 'rgba(123, 159, 212, 0.3)');
@@ -570,7 +575,7 @@ function bindEvents() {
     const sendBtn = document.getElementById('btn-treehole-send');
     if (counter) {
       counter.textContent = `${count} / 500`;
-      counter.style.color = count > 500 ? '#FF3B30' : '#8E8E93';
+      counter.style.color = count > 500 ? 'var(--color-error, #FF3B30)' : 'var(--color-text-tertiary)';
     }
     if (sendBtn) {
       sendBtn.disabled = count === 0;
@@ -596,7 +601,7 @@ function bindEvents() {
   // 镜像页 - AI 伴侣入口
   document.getElementById('btn-open-companion')?.addEventListener('click', async () => {
     // 添加 AI 开场白
-    const intro = '你好，我看到你这周记录了几次疲惫的状态。能和我聊聊，是什么让你最近感到累吗？';
+    const intro = '你好，今天感觉怎么样？我在这里倾听你。';
     CompanionState.addMessage('assistant', intro);
     Router.navigate('companion');
     UI.renderCompanionMessages();
@@ -693,13 +698,13 @@ function renderEmotionLevelCards() {
   const container = document.getElementById('emotion-level-cards');
   if (!container) return;
 
-  const emotionColors = ['#FFD580', '#FFE4B5', '#F5F5F5', '#C8D9F0', '#90A4C8'];
+  const emotionColors = ['#FFD580', '#FFE4B5', '#E8E8ED', '#C8D9F0', '#90A4C8'];
   const emotionIcons = [
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 1 4 1 4-1 4-1"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>'
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 1 4 1 4-1 4-1"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>'
   ];
 
   const levels = [
@@ -711,8 +716,9 @@ function renderEmotionLevelCards() {
   ];
 
   container.innerHTML = levels.map((l, i) => `
-    <button class="emotion-card" data-level="${l.value}" style="border-left: 4px solid ${l.color}">
-      <span class="emotion-icon">${emotionIcons[i]}</span>
+    <button class="emotion-card" data-level="${l.value}">
+      <span class="emotion-indicator" style="background-color: ${l.color}"></span>
+      <span class="emotion-icon" style="color: ${l.color}">${emotionIcons[i]}</span>
       <span class="emotion-text">${l.label}</span>
     </button>
   `).join('');

@@ -21,7 +21,7 @@
   /* Text colors */
   --color-text-primary: #1d1d1f;   /* Near black */
   --color-text-secondary: rgba(0, 0, 0, 0.8);  /* Black 80% */
-  --color-text-tertiary: rgba(0, 0, 0, 0.48);   /* Black 48% */
+  --color-text-tertiary: rgba(0, 0, 0, 0.6);   /* Black 60% - WCAG AA compliant */
   --color-text-inverse: #ffffff;  /* White text on dark */
 
   /* UI elements */
@@ -86,6 +86,26 @@
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);  /* Subtle card lift */
   --shadow-elevated: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;  /* Apple-style soft shadow */
   --shadow-button: 0 2px 8px rgba(0, 113, 227, 0.25);  /* Blue glow for CTAs */
+
+  /* ============================================
+     Chart Colors (emotion scale 1-5)
+     ============================================ */
+
+  --color-emotion-1: #90A4C8;  /* 很不愉快 - cool blue-gray */
+  --color-emotion-2: #C8D9F0;  /* 不太愉快 */
+  --color-emotion-3: #E8E8ED;  /* 不悲不喜 - neutral */
+  --color-emotion-4: #FFE4B5;  /* 有点愉快 - warm peach */
+  --color-emotion-5: #FFD580;  /* 非常愉快 - warm gold */
+
+  --color-chart-line: #7B9FD4;
+  --color-chart-gradient-start: rgba(123, 159, 212, 0.3);
+  --color-chart-gradient-end: rgba(123, 159, 212, 0);
+  --color-chart-grid: #E5E5EA;
+  --color-chart-label: #8E8E93;
+
+  /* Semantic colors */
+  --color-error: #FF3B30;
+  --color-success: #34C759;
 
   /* ============================================
      Transitions
@@ -471,9 +491,7 @@ body.has-banner {
   right: 0;
   height: calc(60px + var(--safe-area-bottom));
   padding-bottom: var(--safe-area-bottom);
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background-color: rgba(255, 255, 255, 0.95);
   border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: space-around;
@@ -670,8 +688,8 @@ textarea.input-search {
 }
 
 @keyframes typing {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-  30% { transform: translateY(-5px); opacity: 1; }
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
 }
 
 /* ============================================
@@ -687,7 +705,7 @@ textarea.input-search {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 

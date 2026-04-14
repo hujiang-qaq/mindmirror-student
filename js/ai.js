@@ -1,12 +1,12 @@
 /**
  * 群声镜 MindMirror · AI 模块
- * Claude API 调用封装
+ * MiniMax API 调用封装
  */
 
 const AI = {
   // API 配置
-  API_URL: 'https://api.anthropic.com/v1/messages',
-  MODEL: 'claude-haiku-4-5-20251001',
+  API_URL: 'https://api.minimaxi.chat/v1/text/chatcompletion_v2',
+  MODEL: 'MiniMax-M2.7',
 
   // 获取 API Key
   getApiKey() {
@@ -27,7 +27,7 @@ const AI = {
    * 通用消息调用
    * @param {string[]} systemPrompts - 系统提示词数组
    * @param {Array} messages - 对话历史 [{role, content}]
-   * @param {number} maxTokens - 最大 token 数
+   * @param {number} maxTokens - 最大 token 数（未使用，兼容旧接口）
    * @returns {Promise<string>} AI 回复内容
    */
   async sendMessage(systemPrompts, messages, maxTokens = 1024) {
@@ -40,35 +40,38 @@ const AI = {
     const system = systemPrompts.join('\n\n');
 
     // 构建消息体
-    const requestBody = {
-      model: this.MODEL,
-      max_tokens: maxTokens,
-      system,
-      messages: messages.map(m => ({
+    const allMessages = [
+      { role: 'system', content: system },
+      ...messages.map(m => ({
         role: m.role,
         content: m.content
       }))
-    };
+    ];
 
     try {
       const response = await fetch(this.API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
+          'Authorization': `Bearer ${apiKey}`
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({
+          model: this.MODEL,
+          messages: allMessages
+        })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `API 请求失败 (${response.status})`);
+        throw new Error(data.error?.message || data.msg || `API 请求失败 (${response.status})`);
       }
 
-      const data = await response.json();
-      return data.content[0].text;
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('API 响应格式异常');
+      }
+
+      return data.choices[0].message.content;
     } catch (error) {
       if (error.message.includes('请先在页面顶部输入 API Key')) {
         throw error;
@@ -178,3 +181,13 @@ const AI = {
 
 // 导出
 window.AI = AI;
+
+// 兼容性别名（管理端用 callMinimaxAPI）
+window.callMinimaxAPI = function(userMessage, apiKey, dataRange, conversationHistory) {
+  const messages = [
+    { role: 'system', content: `你是群声镜智能决策助手。当前数据范围：${dataRange}` },
+    ...conversationHistory,
+    { role: 'user', content: userMessage }
+  ];
+  return AI.sendMessage([], messages);
+};
